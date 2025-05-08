@@ -1,5 +1,5 @@
 import { GoogleSpreadsheet, GoogleSpreadsheetRow } from 'google-spreadsheet';
-import { OAuth2Client } from 'google-auth-library';
+import { OAuth2Client, CodeChallengeMethod } from 'google-auth-library';
 import { google } from 'googleapis';
 import crypto from 'crypto';
 
@@ -50,7 +50,7 @@ export function getAuthUrl() {
     access_type: 'offline',
     scope: scopes,
     code_challenge: challenge,
-    code_challenge_method: 'S256' as 'S256',
+    code_challenge_method: 'S256' as CodeChallengeMethod,
   });
 }
 
