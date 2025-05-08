@@ -4,28 +4,40 @@ A responsive dashboard application that provides news analytics, payout calculat
 
 ## Features
 
-- User authentication with NextAuth.js
-- News and blog data integration
+- User authentication with Firebase Auth
+- News and blog data integration with advanced filtering
+- Real-time news updates and blog post management
 - Advanced filtering and search capabilities
+  - Filter by author
+  - Date range filtering
+  - Content type filtering (News/Blog)
 - Payout calculator with export functionality
+  - Customizable payout rates
+  - Local storage persistence
+  - Export to multiple formats
 - Interactive charts and analytics
 - Dark mode support
-- Responsive design
+- Responsive design with mobile-first approach
+- Performance optimized with code splitting and lazy loading
 
 ## Tech Stack
 
-- Next.js 14
-- React 18
-- TypeScript
+- Next.js 14 with App Router
+- React 18 with Suspense and dynamic imports
+- TypeScript for type safety
 - Redux Toolkit for state management
 - Tailwind CSS for styling
 - Chart.js for data visualization
-- NextAuth.js for authentication
+- Firebase Authentication
+- React Query for data fetching
+- PDF and CSV export capabilities
 
 ## Prerequisites
 
 - Node.js 18.x or later
 - npm or yarn package manager
+- Firebase project setup
+- News API key
 
 ## Setup
 
@@ -44,31 +56,34 @@ A responsive dashboard application that provides news analytics, payout calculat
 
 3. Create a `.env.local` file in the root directory with the following variables:
    ```env
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-secret-key
-   GITHUB_ID=your-github-client-id
-   GITHUB_SECRET=your-github-client-secret
-   GOOGLE_ID=your-google-client-id
-   GOOGLE_SECRET=your-google-client-secret
+   NEXT_PUBLIC_API_URL=http://localhost:3000
+   NEXT_PUBLIC_FIREBASE_API_KEY=your-firebase-api-key
+   NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-firebase-auth-domain
+   NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-firebase-project-id
+   NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-firebase-storage-bucket
+   NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-firebase-messaging-sender-id
+   NEXT_PUBLIC_FIREBASE_APP_ID=your-firebase-app-id
    NEWS_API_KEY=your-news-api-key
    ```
 
 4. Start the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
 
-1. Sign in using your GitHub or Google account
-2. Navigate through the dashboard using the sidebar
-3. Use the search and filter options to find specific articles
+1. Sign in using your Firebase authentication
+2. Navigate through the dashboard using the responsive sidebar
+3. Use the advanced search and filter options to find specific articles
 4. Calculate payouts using the calculator component
-5. Export data in various formats
+   - Set custom rates for news and blog posts
+   - Export calculations in various formats
+5. View analytics and charts for content performance
 6. Toggle dark mode using the theme switcher
 
 ## Project Structure
@@ -76,12 +91,27 @@ yarn dev
 ```
 src/
 ├── app/                 # Next.js app directory
-├── components/          # React components
-├── lib/                 # Utility functions
-├── store/              # Redux store configuration
-├── types/              # TypeScript type definitions
-└── styles/             # Global styles
+│   ├── api/            # API routes
+│   ├── auth/           # Authentication pages
+│   └── layout.tsx      # Root layout
+├── components/         # React components
+│   ├── NewsOverview/   # News and blog components
+│   ├── PayoutCalculator/ # Payout management
+│   └── Analytics/      # Analytics components
+├── lib/               # Utility functions
+├── store/            # Redux store configuration
+├── types/            # TypeScript type definitions
+└── styles/           # Global styles
 ```
+
+## Performance Optimizations
+
+- Code splitting with dynamic imports
+- Optimized bundle size with webpack configuration
+- CSS optimization with Tailwind
+- Image optimization with Next.js Image component
+- Security headers and best practices
+- Caching strategies for API responses
 
 ## Contributing
 
