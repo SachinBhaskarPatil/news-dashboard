@@ -1,7 +1,6 @@
-import { GoogleSpreadsheet, GoogleSpreadsheetRow } from 'google-spreadsheet';
-import { OAuth2Client, CodeChallengeMethod } from 'google-auth-library';
+import { GoogleSpreadsheet } from 'google-spreadsheet';
+import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
-import crypto from 'crypto';
 
 interface ExportData {
   title: string;
@@ -9,71 +8,6 @@ interface ExportData {
   type: string;
   date: string;
   payout: number;
-}
-
-// OAuth2 configuration
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_ID || '';
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET || '';
-const REDIRECT_URI = process.env.NEXTAUTH_URL + '/api/auth/callback/google';
-
-// Generate PKCE code verifier and challenge
-function generatePKCE() {
-  const verifier = crypto.randomBytes(32).toString('base64url');
-  const challenge = crypto
-    .createHash('sha256')
-    .update(verifier)
-    .digest('base64url');
-  return { verifier, challenge };
-}
-
-export function getAuthUrl() {
-  const oauth2Client = new OAuth2Client(
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    REDIRECT_URI
-  );
-
-  const scopes = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive.file',
-    'https://www.googleapis.com/auth/drive',
-  ];
-
-  const { verifier, challenge } = generatePKCE();
-
-  // Store the verifier in a cookie or session
-  if (typeof window !== 'undefined') {
-    sessionStorage.setItem('code_verifier', verifier);
-  }
-
-  return oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scopes,
-    code_challenge: challenge,
-    code_challenge_method: 'S256' as CodeChallengeMethod,
-  });
-}
-
-export async function getOAuthClient(code: string) {
-  const oauth2Client = new OAuth2Client(
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    REDIRECT_URI
-  );
-
-  // Get the stored code verifier
-  let codeVerifier;
-  if (typeof window !== 'undefined') {
-    codeVerifier = sessionStorage.getItem('code_verifier');
-  }
-
-  const response = await oauth2Client.getToken({
-    code,
-    codeVerifier: codeVerifier || undefined,
-  });
-
-  oauth2Client.setCredentials(response.tokens);
-  return oauth2Client;
 }
 
 export async function createAndGetSpreadsheet(auth: OAuth2Client) {

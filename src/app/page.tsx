@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import Cookies from 'js-cookie'
+import { NewsAPIArticle } from '@/types'
 
 // Dynamically import client components with loading states
 const NewsOverview = dynamic(() => import('@/components/NewsOverview'), {
@@ -21,38 +22,10 @@ const NewsAnalytics = dynamic(() => import('@/components/NewsAnalytics'), {
   ssr: true
 })
 
-async function getNewsData() {
-  try {
-    // Use absolute URL for server-side fetching
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
-    const response = await fetch(
-      `${baseUrl}/api/news?q=news&page=1&pageSize=10&type=all`,
-      { 
-        next: { revalidate: 3600 },
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    )
-    
-    if (!response.ok) {
-      console.error('API Error:', await response.text())
-      throw new Error('Failed to fetch news')
-    }
-
-    const data = await response.json()
-    console.log('Fetched data:', data) // Debug log
-    return data.articles || []
-  } catch (error) {
-    console.error('Error fetching news:', error)
-    return []
-  }
-}
-
 export default function Home() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState<NewsAPIArticle[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -66,10 +39,28 @@ export default function Home() {
           const token = await user.getIdToken();
           Cookies.set('firebase-token', token, { expires: 7 });
           
-          const initialArticles = await getNewsData();
-          setArticles(initialArticles);
+          // Fetch news data
+          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
+            (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+          
+          const response = await fetch(
+            `${baseUrl}/api/news?q=news&page=1&pageSize=10&type=all`,
+            { 
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            }
+          );
+          
+          if (!response.ok) {
+            throw new Error('Failed to fetch news');
+          }
+
+          const data = await response.json();
+          setArticles(data.articles || []);
         } catch (error) {
           console.error('Error loading articles:', error);
+          setArticles([]);
         } finally {
           setLoading(false);
         }
