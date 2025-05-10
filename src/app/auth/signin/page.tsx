@@ -67,7 +67,7 @@ export default function SignIn() {
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
         <div>
           <h1 className="text-center text-4xl font-bold text-indigo-600 mb-2">
-            News & Blogs Dashboard
+            NewsFlow
           </h1>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
